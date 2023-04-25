@@ -7,7 +7,8 @@ from model_wrapper import ModelWrapper
 from xplique.attributions import SobolAttributionMethod
 from xplique.attributions import IntegratedGradients
 from xplique.attributions import SmoothGrad, Saliency, DeconvNet, GradientInput, GuidedBackprop
-from object_detector import  BoxIouCalculator,ImageObjectDetectorScoreCalculator, YoloObjectFormater
+from object_detector import BoxIouCalculator,ImageObjectDetectorScoreCalculator, YoloObjectFormater
+from xplique.commons.operators import operator_batching
 
 import matplotlib.pyplot as plt
 from xplique.plots.image import _normalize, _clip_percentile
@@ -50,6 +51,8 @@ class Explainer:
 
     def score(self, method, explanation, img, preds, params={}):
         wrapper = ModelWrapper(self.model, img.shape[1], explanation.shape[2], self.nb_classes)
+        operator_batched = operator_batching(self.score_calculator.tf_batched_score)
+        params["pred_batching"] = operator_batched
         metric = self.metrics[method](wrapper, np.array(img), wrapper.get_boxes(preds), **params)
         return metric(explanation)
 
@@ -105,11 +108,12 @@ if __name__ == "__main__":
 
     nb_classes = 20
     explainer = Explainer(mm)
+    """
     params_sobol = {
         "batch_size": 16,
         "grid_size": 16,
         "nb_design": 32
-    }
+    }"""
     params = {
         "batch_size": 16
     }

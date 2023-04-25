@@ -1,0 +1,6 @@
+./venv
+.ipynb_checkpoints
+img
+.idea
+*.npz
+*.pyc
