@@ -8,7 +8,6 @@ from xplique.attributions import SobolAttributionMethod
 from xplique.attributions import IntegratedGradients
 from xplique.attributions import SmoothGrad, Saliency, DeconvNet, GradientInput, GuidedBackprop
 from object_detector import BoxIouCalculator,ImageObjectDetectorScoreCalculator, YoloObjectFormater
-from xplique.commons.operators import operator_batching
 
 import matplotlib.pyplot as plt
 from xplique.plots.image import _normalize, _clip_percentile
@@ -132,4 +131,4 @@ if __name__ == "__main__":
     explainer.vizualise(f"{model}_{img_name}", "img")
     plt.show()
     #print("Score :", explainer.score("average_stability", explanation, imm, preds, {"batch_size":16, "nb_samples":50}))
-    print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16}))
+    print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16, "steps":30,"max_percentage_perturbed":0.5}))
