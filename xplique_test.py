@@ -12,7 +12,7 @@ from xplique.commons.operators import operator_batching
 
 import matplotlib.pyplot as plt
 from xplique.plots.image import _normalize, _clip_percentile
-from xplique.metrics import Deletion, Insertion, MuFidelity
+from xplique_metrics import Deletion, Insertion, MuFidelity, AverageStability
 
 
 class Explainer:
@@ -28,7 +28,8 @@ class Explainer:
     metrics = {
         "deletion": Deletion,
         "insertion": Insertion,
-        "mufidelity": MuFidelity
+        "mufidelity": MuFidelity,
+        "average_stability": AverageStability
     }
     def __init__(self, model, nb_classes=20):
         self.model = model
@@ -51,8 +52,8 @@ class Explainer:
 
     def score(self, method, explanation, img, preds, params={}):
         wrapper = ModelWrapper(self.model, img.shape[1], explanation.shape[2], self.nb_classes)
-        operator_batched = operator_batching(self.score_calculator.tf_batched_score)
-        params["pred_batching"] = operator_batched
+        #operator_batched = operator_batching()
+        params["operator"] = self.score_calculator.tf_batched_score
         metric = self.metrics[method](wrapper, np.array(img), wrapper.get_boxes(preds), **params)
         return metric(explanation)
 
@@ -114,11 +115,21 @@ if __name__ == "__main__":
         "grid_size": 16,
         "nb_design": 32
     }"""
+    """
+    ### Param saliency
+    method = "saliency"
     params = {
         "batch_size": 16
     }
-    method = "saliency"
+    """
+    method = "smoothgrad"
+    params = {
+        "batch_size": 16,
+        "nb_samples":500,
+        "noise":0.069
+    }
     explanation = explainer.apply(method, preds, imm, params)
     explainer.vizualise(f"{model}_{img_name}", "img")
     plt.show()
-    print("Score :",explainer.score("mufidelity", explanation, imm, preds, {"batch_size":16, "nb_samples":50}))
+    #print("Score :", explainer.score("average_stability", explanation, imm, preds, {"batch_size":16, "nb_samples":50}))
+    print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16}))
