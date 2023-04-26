@@ -7,7 +7,8 @@ from abc import ABC, abstractmethod
 import tensorflow as tf
 import numpy as np
 
-from xplique.commons import numpy_sanitize, get_inference_function
+from xplique.commons import numpy_sanitize
+from xplique_metrics.additionnals_operators import get_inference_function
 from xplique.types import Callable, Optional, Union
 
 

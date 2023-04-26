@@ -52,9 +52,13 @@ class Explainer:
     def score(self, method, explanation, img, preds, params={}):
         wrapper = ModelWrapper(self.model, img.shape[1], explanation.shape[2], self.nb_classes)
         #operator_batched = operator_batching()
-        params["operator"] = self.score_calculator.tf_batched_score
+        if method != "average_stability":
+            params["operator"] = self.score_calculator.tf_batched_score
+            metric = self.metrics[method](wrapper, np.array(img), wrapper.get_boxes(preds), **params)
+            return metric(explanation)
+
         metric = self.metrics[method](wrapper, np.array(img), wrapper.get_boxes(preds), **params)
-        return metric(explanation)
+        return metric(self.explainer_wrapper)
 
     def _get_experiment_id(self, exp_name, alpha, cmap, clip_percentile):
         id = exp_name
@@ -63,7 +67,7 @@ class Explainer:
         id += f"_alpha_{alpha}_cmap_{cmap}_clip_percentile_{clip_percentile}"
         return id
 
-    def vizualise(self, exp_name="experiment", dest_folder="img", alpha=0.5, cmap="jet", clip_percentile=0.5, figsize=(10,10)):
+    def visualize(self, exp_name="experiment", dest_folder="img", alpha=0.5, cmap="jet", clip_percentile=0.5, figsize=(10,10)):
         dest_folder = Path(dest_folder)
         os.makedirs(dest_folder, exist_ok=True)
         image = self.last_img[-1]
@@ -124,11 +128,11 @@ if __name__ == "__main__":
     method = "smoothgrad"
     params = {
         "batch_size": 16,
-        "nb_samples":500,
-        "noise":0.069
+        "nb_samples": 5,
+        "noise": 0.069
     }
     explanation = explainer.apply(method, preds, imm, params)
-    explainer.vizualise(f"{model}_{img_name}", "img")
+    explainer.visualize(f"{model}_{img_name}", "img")
     plt.show()
     #print("Score :", explainer.score("average_stability", explanation, imm, preds, {"batch_size":16, "nb_samples":50}))
     print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16, "steps":30,"max_percentage_perturbed":0.5}))
