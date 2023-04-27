@@ -128,7 +128,7 @@ if __name__ == "__main__":
     method = "smoothgrad"
     params = {
         "batch_size": 16,
-        "nb_samples": 5,
+        "nb_samples": 500,
         "noise": 0.069
     }
     explanation = explainer.apply(method, preds, imm, params)

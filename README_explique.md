@@ -12,6 +12,38 @@ works with tensorflow methods for the detection task
 
 - Install jupyter notebook if you want to test the notebook branch
 
+### Retrain on Lard
+- install the additionnal dep:
+
+pip install glob2
+pip install pycocotools
+
+- Export lard with the export script :
+
+```
+  dataset.export(output_dir ="data/newYoloFormat/", 
+               bbx_format="xywh", # Options are 'tlbr', 'tlwh', 'xywh', 'corners'
+               normalized=True, 
+               label_file="multiple", # 'multiple' produces 1 file per label, as expected by yolo architectures. 
+               crop=True, # 'True' recommended to remove the watermark. Pay attention to not crop a picture multiple times
+               sep=' ', # Separator in the label file.
+               header=False, # 'False' is recommender for multiple files, 'True' for single files. It adds a header with column names in the first line of the labels file  
+               ext="txt")
+```
+- Run keras_cv import script :
+
+```
+ python coco_train_script.py --train_images 
+ C:\Users\maxime.carrere\PycharmProjects\datasprint\data\newYoloFormat\train\images 
+ --train_labels C:\Users\maxime.carrere\PycharmProjects\datasprint\data\newYoloFormat\train\labels 
+ --test_images C:\Users\maxime.carrere\PycharmProjects\datasprint\data\newYoloFormat\test\images 
+ --test_labels C:\Users\maxime.carrere\PycharmProjects\datasprint\data\newYoloFormat\test\labels 
+ --bbox_source_format cxcywh 
+ -s coco
+```
+
+- run train :
+python coco_train_script.py --data_name coco.json
 ### Run
 Run the notebook xplique_detection_notebook.
 Alternatively -I did not document it yet-, you can use it with xplique_test.py (parameters to modifity to test

@@ -318,7 +318,7 @@ def yolor_assign_anchors(bbox_labels, anchor_ratios, feature_sizes, anchor_aspec
         # pick by aspect ratio
         bboxes_centers, bboxes_hws = corners_to_center_yxhw_nd(bboxes)
         bboxes_centers, bboxes_hws = bboxes_centers * feature_size, bboxes_hws * feature_size
-        aspect_ratio = tf.expand_dims(bboxes_hws, 0) / tf.expand_dims(anchor_ratio, 1)
+        aspect_ratio = tf.cast(tf.expand_dims(bboxes_hws, 0), tf.float64) / tf.expand_dims(anchor_ratio, 1)
         aspect_pick = tf.reduce_max(tf.maximum(aspect_ratio, 1 / aspect_ratio), axis=-1) < anchor_aspect_thresh
         anchors_pick = tf.repeat(tf.expand_dims(tf.range(num_anchors), -1), num_bboxes_true, axis=-1)[aspect_pick]
         aspect_picked_bboxes_labels = tf.concat([bboxes_centers, bboxes_hws, labels], axis=-1)
@@ -344,7 +344,7 @@ def yolor_assign_anchors(bbox_labels, anchor_ratios, feature_sizes, anchor_aspec
         # Results
         centers_true = matched_bboxes_all[:, :2] - tf.cast(matched_bboxes_idx_all, matched_bboxes_all.dtype)
         bbox_labels_true = tf.concat([centers_true, matched_bboxes_all[:, 2:]], axis=-1)
-        rr = tf.zeros([feature_size[0], feature_size[1], num_anchors, num_output_channels])
+        rr = tf.zeros([tf.cast(feature_size[0], tf.int32), tf.cast(feature_size[1], tf.int32), num_anchors, num_output_channels])
         matched_bboxes_idx_all = tf.clip_by_value(matched_bboxes_idx_all, 0, tf.cast(feature_size, matched_bboxes_idx_all.dtype) - 1)
         rr = tf.tensor_scatter_nd_update(rr, tf.concat([matched_bboxes_idx_all, tf.expand_dims(anchors_pick_all, 1)], axis=-1), bbox_labels_true)
         rrs.append(tf.reshape(rr, [-1, num_output_channels]))
