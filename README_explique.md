@@ -48,3 +48,11 @@ python coco_train_script.py --data_name coco.json
 Run the notebook xplique_detection_notebook.
 Alternatively -I did not document it yet-, you can use it with xplique_test.py (parameters to modifity to test
 others methods, metrics, models, are at the end).
+
+- additionnal:
+windows 10 natif :
+  conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
+# Anything above 2.10 is not supported on the GPU on Windows Native
+python -m pip install "tensorflow<2.11"
+# Verify install:
+python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
