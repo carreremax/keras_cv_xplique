@@ -69,9 +69,10 @@ class DecodePredictions(layers.Layer):
 
     def __init_anchor__(self, input_shape):
         if isinstance(input_shape, (list, tuple)):
+            if len(input_shape) >= 3:
             # input_shape = input_shape[:2] if backend.image_data_format() == "channels_last" else input_shape[-2:]
-            channel_axis, channel_dim = min(enumerate(input_shape), key=lambda xx: xx[1])  # Assume the smallest value is the channel dimension
-            input_shape = [dim for axis, dim in enumerate(input_shape) if axis != channel_axis]
+                channel_axis, channel_dim = min(enumerate(input_shape), key=lambda xx: xx[1])  # Assume the smallest value is the channel dimension
+                input_shape = [dim for axis, dim in enumerate(input_shape) if axis != channel_axis]
         else:
             input_shape = (input_shape, input_shape)
 
