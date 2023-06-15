@@ -43,8 +43,7 @@ class Explainer:
         self.last_params = params.copy()
         self.last_img = img
         wrapper = ModelWrapper(self.model, img.shape[1], img.shape[2], self.nb_classes)
-        params["operator"] = self.score_calculator.tf_batched_score
-        self.explainer_wrapper = self.methods[method_name](wrapper, **self.last_params)
+        self.explainer_wrapper = self.methods[method_name](wrapper, operator=self.score_calculator.tf_batched_score, **self.last_params)
         self.last_expl = self.explainer_wrapper.explain(img, wrapper.get_boxes(preds))
         self.last_params["method"] = method_name
         return self.last_expl
