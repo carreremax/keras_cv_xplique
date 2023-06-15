@@ -92,13 +92,21 @@ class Explainer:
 if __name__ == "__main__":
     import numpy as np
     from pathlib import Path
-
+    from PIL import Image
     # mm = kecam.yolor.YOLOR_CSP()
     # model = "yolor_csp"
-    model = "yolov7_tiny"
-    mm = kecam.yolov7.YOLOV7_Tiny()
-    imm_orig = kecam.test_images.cat()
-    img_name = "cat"
+    #model = "yolov7_tiny"
+    #mm = kecam.yolov7.YOLOV7_Tiny()
+    model_path = "models/EfficientDetD0_640_LAMB_coco.json_batchsize_64_randaug_6_mosaic_0.5_color_random_hsv_position_rts_lr512_0.008_wd_0.02_anchors_mode_None_latest.h5"
+    model = "effecientdet_lard"
+    mm = kecam.efficientdet.EfficientDetD0(input_shape=(None, 640, 640, 3), num_classes=1, pretrained=model_path)
+
+    #imm_orig = np.array(Image.open(
+    #    "C:\\Users\\maxime.carrere\\PycharmProjects\\datasprint\\data\\newYoloFormat\\train\\images\\LFPO_02_500_211.jpeg"))
+    imm_orig = np.array(Image.open("KJFK_22L_35_29.jpeg"))
+    img_name = "KJFK_22L_35_29"
+    #imm_orig = kecam.test_images.cat()
+    #img_name = "cat"
     # imm_orig = kecam.test_images.dog_cat()
     # img_name = "cat_dog"
     print(imm_orig.shape)
@@ -110,7 +118,7 @@ if __name__ == "__main__":
     bboxs, lables, confidences = preds[0]
     kecam.coco.show_image_with_bboxes(imm_orig, bboxs, lables, confidences)
 
-    nb_classes = 20
+    nb_classes = 1
     explainer = Explainer(mm)
     """
     params_sobol = {
@@ -118,7 +126,7 @@ if __name__ == "__main__":
         "grid_size": 16,
         "nb_design": 32
     }"""
-    """
+
     ### Param saliency
     method = "saliency"
     params = {
@@ -128,11 +136,12 @@ if __name__ == "__main__":
     method = "smoothgrad"
     params = {
         "batch_size": 16,
-        "nb_samples": 500,
+        "nb_samples": 100,
         "noise": 0.069
     }
+    """
     explanation = explainer.apply(method, preds, imm, params)
     explainer.visualize(f"{model}_{img_name}", "img")
     plt.show()
     #print("Score :", explainer.score("average_stability", explanation, imm, preds, {"batch_size":16, "nb_samples":50}))
-    print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16, "steps":30,"max_percentage_perturbed":0.5}))
+    #print("Score :", explainer.score("deletion", explanation, imm, preds, {"batch_size":16, "steps":30,"max_percentage_perturbed":0.5}))

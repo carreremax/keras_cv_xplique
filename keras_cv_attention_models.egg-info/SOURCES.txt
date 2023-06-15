@@ -143,3 +143,9 @@ keras_cv_attention_models/yolox/yolox.py
 tests/test_layers.py
 tests/test_models.py
 tests/test_models_tf.py
+xplique_metrics/__init__.py
+xplique_metrics/additionnals_operators.py
+xplique_metrics/base.py
+xplique_metrics/fidelity.py
+xplique_metrics/representativity.py
+xplique_metrics/stability.py

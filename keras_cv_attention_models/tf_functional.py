@@ -10,7 +10,7 @@ from tensorflow import (
     convert_to_tensor,
     expand_dims,
     eye,
-    gather,
+    gather,gather_nd,
     linspace,
     map_fn,
     matmul,
