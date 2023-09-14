@@ -20,8 +20,8 @@ class ModelWrapper():
 
         # print(preds.shape)
         y = self.get_boxes_constant_size_map(preds)
-        tf.print("printing output------------")
-        tf.print(tf.shape(y))
+        #tf.print("printing output------------")
+        #tf.print(tf.shape(y))
         #tf.print(y[0])
         return y
 

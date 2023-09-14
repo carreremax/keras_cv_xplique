@@ -127,10 +127,16 @@ if __name__ == "__main__":
     }"""
 
     ### Param saliency
+    method = "deconvnet"
+    params = {
+        "batch_size": 16
+    }
+    """
     method = "saliency"
     params = {
         "batch_size": 16
     }
+    """
     """
     method = "smoothgrad"
     params = {

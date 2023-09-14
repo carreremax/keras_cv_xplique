@@ -255,7 +255,7 @@ class ImageObjectDetectorScoreCalculator:
 
         score_values = tf.map_fn(batch_loop, (objects, object_ref),
                                  fn_output_signature=tf.float32)
-        print("score_values", score_values.shape)
+        #("score_values", score_values.shape)
         return score_values
     
     def tf_batched_score(self, model, inp, object_ref):
@@ -280,10 +280,10 @@ class ImageObjectDetectorScoreCalculator:
 
                 # (nb_box_ref, nb_box_pred, 4)
                 boxes_refs = tf.repeat(tf.expand_dims(boxes_refs, axis=1), repeats=size, axis=1)
-                print("boxes_refs", boxes_refs.shape)
+                #print("boxes_refs", boxes_refs.shape)
                 # (nb_box_ref, nb_box_pred, nb_classes)
                 class_refs = tf.repeat(tf.expand_dims(class_refs, axis=1), repeats=size, axis=1)
-                print("class_refs", class_refs.shape)
+                #print("class_refs", class_refs.shape)
 
                 # (nb_box_ref, nb_box_pred)
                 iou = self.iou_calculator.intersect(boxes_refs, current_boxes)
@@ -292,29 +292,29 @@ class ImageObjectDetectorScoreCalculator:
                 # (nb_box_ref, nb_box_pred)
                 classification_similarity = tf.reduce_sum(class_refs * classification, axis=-1) \
                         / (tf.norm(classification, axis=-1) * tf.norm(class_refs, axis=-1))
-                print("classification_similarity", classification_similarity.shape)
+                #print("classification_similarity", classification_similarity.shape)
 
                 # proba_detection (nb_box_pred, 1) ?
-                print("proba_detection", proba_detection.shape)
+                #print("proba_detection", proba_detection.shape)
                 # (nb_box_ref, nb_box_pred)
                 boxes_pairwise_scores = iou * tf.squeeze(proba_detection, axis=1) \
                                             * classification_similarity
-                print("boxes_pairwise_scores", boxes_pairwise_scores.shape)
+                #print("boxes_pairwise_scores", boxes_pairwise_scores.shape)
 
                 # assign to a reference box the most similar predicted box
                 # (nb_box_ref,)
                 ref_boxes_scores = tf.reduce_max(boxes_pairwise_scores, axis=1)
-                print("ref_boxes_scores", ref_boxes_scores.shape)
+                #("ref_boxes_scores", ref_boxes_scores.shape)
 
                 # get an attribution for several boxes in the same time
                 # ()
                 image_score = tf.reduce_mean(ref_boxes_scores)
-                print("image_score", image_score.shape)
+                #print("image_score", image_score.shape)
                 return image_score
-        tf.print("Before batch loop")
+        #tf.print("Before batch loop")
         images_score = tf.map_fn(batch_loop, (objects, object_ref),
                                  fn_output_signature=tf.float32)
-        tf.print("images_score", images_score.shape)
+        #tf.print("images_score", images_score.shape)
         return images_score
 
 
